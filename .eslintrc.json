@@ -1,0 +1,9 @@
+{
+  "extends": ["next/core-web-vitals", "next/typescript"],
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    // Add or customize rules as needed
+    "@typescript-eslint/no-unused-vars": "warn",
+    "react/react-in-jsx-scope": "off"
+  }
+}
