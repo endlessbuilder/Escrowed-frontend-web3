@@ -5,6 +5,9 @@ import React, { useRef, useState } from "react";
 import Milestones from "./Milestones";
 import { Upload, XIcon } from "lucide-react";
 
+import web3 from '@/utils/web3';
+import escrowed from '@/utils/escrowed';
+
 function RequestFunds() {
   const [projectLink, setProjectLink] = useState("");
   const [mileStonesObj, setMileStonesObj] = useState([
@@ -30,6 +33,22 @@ function RequestFunds() {
   const mileStones = true;
   const radioRef = useRef<HTMLInputElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const onClickRequestFunds = async () => {
+    const accounts = await web3.eth.getAccounts();
+    console.log(`>>> accounts = ${accounts}`);
+    try {
+      await escrowed.methods
+        .markMilestoneAsDoneBySupplier(accounts[0], 2)
+        .send({
+          from: accounts[0],
+        });
+      alert('markMilestoneAsDoneBySupplier successfully!');
+    } catch (error) {
+      console.error('Error markMilestoneAsDoneBySupplier:', error);
+      alert('Failed to markMilestoneAsDoneBySupplier');
+    }
+  }
 
   return (
     <div className="h-screen w-screen flex flex-col items-start justify-start bg-[#F8F8F8] p-4 overflow-x-hidden gap-y-8">
@@ -158,7 +177,7 @@ function RequestFunds() {
       <div className="w-full flex gap-2 min-h-[120px]">
         {/* Share */}
         <div className="w-full">
-          <Button className="w-full bg-[#52B9FF] flex justify-center items-center gap-2">
+          <Button className="w-full bg-[#52B9FF] flex justify-center items-center gap-2" onClick={()=>onClickRequestFunds()}>
             Request Funds
           </Button>
         </div>

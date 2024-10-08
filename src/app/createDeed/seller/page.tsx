@@ -1,77 +1,112 @@
-"use client";
-import { Button } from "@/components/ui/button";
+'use client';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { ChevronDown, PlusIcon, XIcon } from "lucide-react";
-import React, { useState } from "react";
+} from '@/components/ui/dropdown-menu';
+import { ChevronDown, PlusIcon, XIcon } from 'lucide-react';
+import React, { useState } from 'react';
+
+import web3 from '@/utils/web3';
+import escrowed from '@/utils/escrowed';
+import { USDC } from '@/utils/constants';
 
 function CreateDeedSeller() {
-  const [deed, setDeed] = useState("");
+  const [deed, setDeed] = useState('');
   const [isOneTime, setIsOneTime] = useState(true);
-  const [modeOfPayment, setModeOfPayment] = useState<string | null>("");
+  const [modeOfPayment, setModeOfPayment] = useState<string | null>('');
   const [expectedTimeOfCompletion, setExpectedTimeOfCompletion] = useState<
     string[]
   >([]);
   const [isDeedSaved, setIsDeedSaved] = useState(false);
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState('');
   const [mileStones, setMileStones] = useState([
-    { id: 0, milestone: "", amount: "0", expectedTime: "" },
+    { id: 0, milestone: '', amount: '0', expectedTime: '' },
   ]);
 
   function addMilestone() {
     setMileStones((prev) => [
       ...prev,
-      { id: prev.length, milestone: "", amount: "0", expectedTime: "" },
+      { id: prev.length, milestone: '', amount: '0', expectedTime: '' },
     ]);
   }
+
+  function filterFn(value: any, index: number, array: any) {
+    return value.amount;
+  }
+
+  const getMilstoneFunds = () => {
+    const filtered = mileStones.map(filterFn);
+    while (filtered.length < 10) {
+      filtered.push(0);
+    }
+    return filtered;
+  };
+
+  const saveDeed = async () => {
+    setIsDeedSaved(true);
+    const accounts = await web3.eth.getAccounts();
+    console.log(`>>> accounts = ${accounts}`);
+    console.log(`>>> mileStoneFunds = ${getMilstoneFunds()}`);
+    try {
+      await escrowed.methods
+        .createJob(accounts[0], USDC, mileStones.length, getMilstoneFunds())
+        .send({
+          from: accounts[0],
+        });
+      alert('Job created successfully!');
+    } catch (error) {
+      console.error('Error creating job:', error);
+      alert('Failed to create job');
+    }
+  };
+
   return (
-    <div className="h-screen w-screen flex flex-col items-start justify-start bg-[#F8F8F8] p-6 overflow-x-hidden gap-y-5">
-      <header className="text-[#484848] font-bold text-lg">
+    <div className='flex h-screen w-screen flex-col items-start justify-start gap-y-5 overflow-x-hidden bg-[#F8F8F8] p-6'>
+      <header className='text-lg font-bold text-[#484848]'>
         <h1>Create a Deed</h1>
       </header>
-      <div className="flex flex-col justify-center gap-y-3 w-full">
+      <div className='flex w-full flex-col justify-center gap-y-3'>
         {/* deed form  */}
-        <div className="text-[#5D5D5D]">
+        <div className='text-[#5D5D5D]'>
           <p>What your deed is about?</p>
         </div>
-        <div className="flex p-2 justify-center items-center w-full bg-[#FFFFFF] border-[#C4C4C4] border-2 rounded-md">
+        <div className='flex w-full items-center justify-center rounded-md border-2 border-[#C4C4C4] bg-[#FFFFFF] p-2'>
           <input
-            type="text"
-            className="rounded-md outline-none w-full"
-            placeholder="Title"
+            type='text'
+            className='w-full rounded-md outline-none'
+            placeholder='Title'
             onChange={(e) => setDeed(e.target.value)}
             value={deed}
           />
           <div
             onClick={() => {
-              setDeed("");
+              setDeed('');
             }}
           >
-            <XIcon className="w-5 h-5 text-[#5D5D5D]" />
+            <XIcon className='h-5 w-5 text-[#5D5D5D]' />
           </div>
         </div>
         <div>
           <textarea
-            className="p-2 rounded-md outline-none border-[#C4C4C4] border-2 w-full"
-            placeholder="Description"
+            className='w-full rounded-md border-2 border-[#C4C4C4] p-2 outline-none'
+            placeholder='Description'
             onChange={(e) => setDescription(e.target.value)}
           ></textarea>
         </div>
       </div>
-      <div className="flex flex-col gap-y-2 w-full">
-        <div className="text-[#5D5D5D]">
+      <div className='flex w-full flex-col gap-y-2'>
+        <div className='text-[#5D5D5D]'>
           <p>How the payment will be distributed?</p>
         </div>
-        <div className="flex justify-center items-center w-full gap-2">
+        <div className='flex w-full items-center justify-center gap-2'>
           <Button
             className={
               isOneTime
-                ? `bg-[#DFEFFF] border-[#52B9FF] text-[#52B9FF] border-2 w-1/2 hover:bg-[#DFEFFF] hover:border-[#52B9FF] hover:text-[#52B9FF]`
-                : `bg-[#FFFFFF] border-[#52B9FF] text-[#52B9FF] border-2 w-1/2 hover:bg-[#DFEFFF] hover:border-[#52B9FF] hover:text-[#52B9FF]`
+                ? `w-1/2 border-2 border-[#52B9FF] bg-[#DFEFFF] text-[#52B9FF] hover:border-[#52B9FF] hover:bg-[#DFEFFF] hover:text-[#52B9FF]`
+                : `w-1/2 border-2 border-[#52B9FF] bg-[#FFFFFF] text-[#52B9FF] hover:border-[#52B9FF] hover:bg-[#DFEFFF] hover:text-[#52B9FF]`
             }
             onClick={() => setIsOneTime(true)}
           >
@@ -80,8 +115,8 @@ function CreateDeedSeller() {
           <Button
             className={
               !isOneTime
-                ? `bg-[#DFEFFF] border-[#52B9FF] text-[#52B9FF] border-2 w-1/2 hover:bg-[#DFEFFF] hover:border-[#52B9FF] hover:text-[#52B9FF]`
-                : `bg-[#FFFFFF] border-[#52B9FF] text-[#52B9FF] border-2 w-1/2 hover:bg-[#DFEFFF] hover:border-[#52B9FF] hover:text-[#52B9FF]`
+                ? `w-1/2 border-2 border-[#52B9FF] bg-[#DFEFFF] text-[#52B9FF] hover:border-[#52B9FF] hover:bg-[#DFEFFF] hover:text-[#52B9FF]`
+                : `w-1/2 border-2 border-[#52B9FF] bg-[#FFFFFF] text-[#52B9FF] hover:border-[#52B9FF] hover:bg-[#DFEFFF] hover:text-[#52B9FF]`
             }
             onClick={() => setIsOneTime(false)}
           >
@@ -89,28 +124,28 @@ function CreateDeedSeller() {
           </Button>
         </div>
       </div>
-      <div className="flex flex-col gap-y-2 w-full">
-        <div className="text-[#5D5D5D]">
+      <div className='flex w-full flex-col gap-y-2'>
+        <div className='text-[#5D5D5D]'>
           <p>Further Details about the deed</p>
         </div>
-        <div className="flex flex-col gap-y-2 items-center justify-center w-full">
-          <div className="w-full bg-[#FFFFFF] rounded-md p-2 border-[#C4C4C4] border-2">
+        <div className='flex w-full flex-col items-center justify-center gap-y-2'>
+          <div className='w-full rounded-md border-2 border-[#C4C4C4] bg-[#FFFFFF] p-2'>
             <DropdownMenu>
-              <DropdownMenuTrigger className="w-full flex items-center justify-center">
+              <DropdownMenuTrigger className='flex w-full items-center justify-center'>
                 {modeOfPayment ? (
-                  <div className="w-[80%] flex justify-start items-center text-black text-sm">
+                  <div className='flex w-[80%] items-center justify-start text-sm text-black'>
                     <p>{modeOfPayment}</p>
                   </div>
                 ) : (
-                  <div className="w-[80%] flex justify-start items-center text-[#C4C4C4] text-sm">
+                  <div className='flex w-[80%] items-center justify-start text-sm text-[#C4C4C4]'>
                     <p>Mode Of Payment</p>
                   </div>
                 )}
-                <div className="w-[20%] flex justify-end items-center">
+                <div className='flex w-[20%] items-center justify-end'>
                   <ChevronDown />
                 </div>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-full">
+              <DropdownMenuContent className='w-full'>
                 <DropdownMenuItem
                   onClick={(e) => {
                     setModeOfPayment(e?.currentTarget?.textContent);
@@ -144,12 +179,12 @@ function CreateDeedSeller() {
           </div>
           {!isOneTime &&
             mileStones.map((val) => (
-              <div className="flex flex-col gap-y-2 w-full" key={val?.id}>
-                <div className="flex p-2 w-full items-center bg-[#FFFFFF] border-[#C4C4C4] border-2 rounded-md">
+              <div className='flex w-full flex-col gap-y-2' key={val?.id}>
+                <div className='flex w-full items-center rounded-md border-2 border-[#C4C4C4] bg-[#FFFFFF] p-2'>
                   <input
-                    type="text"
-                    className="rounded-md w-full outline-none text-sm text-[#C4C4C4]"
-                    placeholder="Milestone"
+                    type='text'
+                    className='w-full rounded-md text-sm text-[#C4C4C4] outline-none'
+                    placeholder='Milestone'
                     onChange={(e) => {
                       setMileStones((prev) => {
                         const newMilestones = [...prev];
@@ -159,11 +194,11 @@ function CreateDeedSeller() {
                     }}
                   />
                 </div>
-                <div className="flex justify-between p-2 w-full items-center bg-[#FFFFFF] border-[#C4C4C4] border-2 rounded-md">
+                <div className='flex w-full items-center justify-between rounded-md border-2 border-[#C4C4C4] bg-[#FFFFFF] p-2'>
                   <input
-                    type="text"
-                    className="rounded-md outline-none text-sm text-[#C4C4C4]"
-                    placeholder="Amount"
+                    type='text'
+                    className='rounded-md text-sm text-[#C4C4C4] outline-none'
+                    placeholder='Amount'
                     onChange={(e) => {
                       setMileStones((prev) => {
                         const newMilestones = [...prev];
@@ -172,32 +207,32 @@ function CreateDeedSeller() {
                       });
                     }}
                   />
-                  <p className="text-[#5D5D5D] text-sm text-bold">(USDT)</p>
+                  <p className='text-bold text-sm text-[#5D5D5D]'>(USDT)</p>
                 </div>
-                <div className="w-full bg-[#FFFFFF] rounded-md p-2 px-1 border-[#C4C4C4] border-2">
+                <div className='w-full rounded-md border-2 border-[#C4C4C4] bg-[#FFFFFF] p-2 px-1'>
                   <DropdownMenu>
-                    <DropdownMenuTrigger className="w-full flex items-center justify-center">
-                      {mileStones[val.id].expectedTime !== "" ? (
-                        <div className="w-[80%] flex justify-start items-center text-black text-sm">
+                    <DropdownMenuTrigger className='flex w-full items-center justify-center'>
+                      {mileStones[val.id].expectedTime !== '' ? (
+                        <div className='flex w-[80%] items-center justify-start text-sm text-black'>
                           <p>{mileStones[val.id].expectedTime}</p>
                         </div>
                       ) : (
-                        <div className="w-[80%] flex justify-start items-center text-[#C4C4C4] text-sm">
+                        <div className='flex w-[80%] items-center justify-start text-sm text-[#C4C4C4]'>
                           <p>Expected Time of Completion</p>
                         </div>
                       )}
-                      <div className="w-[20%] flex justify-end items-center">
+                      <div className='flex w-[20%] items-center justify-end'>
                         <ChevronDown />
                       </div>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-full">
+                    <DropdownMenuContent className='w-full'>
                       {/* Map here */}
                       <DropdownMenuItem
                         onClick={(e) => {
                           setMileStones((prev) => {
                             const newMilestones = [...prev];
                             newMilestones[val.id].expectedTime =
-                              e.currentTarget.textContent || "";
+                              e.currentTarget.textContent || '';
                             return newMilestones;
                           });
                         }}
@@ -209,7 +244,7 @@ function CreateDeedSeller() {
                           setMileStones((prev) => {
                             const newMilestones = [...prev];
                             newMilestones[val.id].expectedTime =
-                              e.currentTarget.textContent || "";
+                              e.currentTarget.textContent || '';
                             return newMilestones;
                           });
                         }}
@@ -221,7 +256,7 @@ function CreateDeedSeller() {
                           setMileStones((prev) => {
                             const newMilestones = [...prev];
                             newMilestones[val.id].expectedTime =
-                              e.currentTarget.textContent || "";
+                              e.currentTarget.textContent || '';
                             return newMilestones;
                           });
                         }}
@@ -233,7 +268,7 @@ function CreateDeedSeller() {
                           setMileStones((prev) => {
                             const newMilestones = [...prev];
                             newMilestones[val.id].expectedTime =
-                              e.currentTarget.textContent || "";
+                              e.currentTarget.textContent || '';
                             return newMilestones;
                           });
                         }}
@@ -247,11 +282,11 @@ function CreateDeedSeller() {
             ))}
           {isOneTime && (
             <>
-              <div className="flex justify-between p-2 w-full items-center bg-[#FFFFFF] border-[#C4C4C4] border-2 rounded-md">
+              <div className='flex w-full items-center justify-between rounded-md border-2 border-[#C4C4C4] bg-[#FFFFFF] p-2'>
                 <input
-                  type="text"
-                  className="rounded-md outline-none text-sm text-[#C4C4C4]"
-                  placeholder="Amount"
+                  type='text'
+                  className='rounded-md text-sm text-[#C4C4C4] outline-none'
+                  placeholder='Amount'
                   onChange={(e) => {
                     setMileStones((prev) => {
                       const newMilestones = [...prev];
@@ -260,31 +295,31 @@ function CreateDeedSeller() {
                     });
                   }}
                 />
-                <p className="text-[#5D5D5D] text-sm text-bold">(USDT)</p>
+                <p className='text-bold text-sm text-[#5D5D5D]'>(USDT)</p>
               </div>
-              <div className="w-full bg-[#FFFFFF] rounded-md p-2 px-1 border-[#C4C4C4] border-2">
+              <div className='w-full rounded-md border-2 border-[#C4C4C4] bg-[#FFFFFF] p-2 px-1'>
                 <DropdownMenu>
-                  <DropdownMenuTrigger className="w-full flex items-center justify-center">
-                    {mileStones[0].expectedTime !== "" ? (
-                      <div className="w-[80%] flex justify-start items-center text-black text-sm">
+                  <DropdownMenuTrigger className='flex w-full items-center justify-center'>
+                    {mileStones[0].expectedTime !== '' ? (
+                      <div className='flex w-[80%] items-center justify-start text-sm text-black'>
                         <p>{mileStones[0].expectedTime}</p>
                       </div>
                     ) : (
-                      <div className="w-[80%] flex justify-start items-center text-[#C4C4C4] text-sm">
+                      <div className='flex w-[80%] items-center justify-start text-sm text-[#C4C4C4]'>
                         <p>Expected Time of Completion</p>
                       </div>
                     )}
-                    <div className="w-[20%] flex justify-end items-center">
+                    <div className='flex w-[20%] items-center justify-end'>
                       <ChevronDown />
                     </div>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
-                    className="w-full"
+                    className='w-full'
                     onChange={(e) => {
                       setMileStones((prev) => {
                         const newMilestones = [...prev];
                         newMilestones[0].expectedTime =
-                          e.currentTarget.textContent || "";
+                          e.currentTarget.textContent || '';
                         return newMilestones;
                       });
                     }}
@@ -295,7 +330,7 @@ function CreateDeedSeller() {
                         setExpectedTimeOfCompletion((prev) => {
                           const newExpectedTimeOfCompletion = [...prev];
                           newExpectedTimeOfCompletion[0] =
-                            e?.currentTarget?.textContent || "";
+                            e?.currentTarget?.textContent || '';
                           return newExpectedTimeOfCompletion;
                         });
                       }}
@@ -307,7 +342,7 @@ function CreateDeedSeller() {
                         setExpectedTimeOfCompletion((prev) => {
                           const newExpectedTimeOfCompletion = [...prev];
                           newExpectedTimeOfCompletion[0] =
-                            e?.currentTarget?.textContent || "";
+                            e?.currentTarget?.textContent || '';
                           return newExpectedTimeOfCompletion;
                         });
                       }}
@@ -319,7 +354,7 @@ function CreateDeedSeller() {
                         setExpectedTimeOfCompletion((prev) => {
                           const newExpectedTimeOfCompletion = [...prev];
                           newExpectedTimeOfCompletion[0] =
-                            e?.currentTarget?.textContent || "";
+                            e?.currentTarget?.textContent || '';
                           return newExpectedTimeOfCompletion;
                         });
                       }}
@@ -331,7 +366,7 @@ function CreateDeedSeller() {
                         setExpectedTimeOfCompletion((prev) => {
                           const newExpectedTimeOfCompletion = [...prev];
                           newExpectedTimeOfCompletion[0] =
-                            e?.currentTarget?.textContent || "";
+                            e?.currentTarget?.textContent || '';
                           return newExpectedTimeOfCompletion;
                         });
                       }}
@@ -345,23 +380,23 @@ function CreateDeedSeller() {
           )}
         </div>
         {!isOneTime && (
-          <div className="w-full flex justify-center items-center">
+          <div className='flex w-full items-center justify-center'>
             <Button
-              className="bg-[#FFFFFF] text-black w-full border-2 border-[#EDEDED] flex justify-center items-center gap-2 hover:bg-white"
+              className='flex w-full items-center justify-center gap-2 border-2 border-[#EDEDED] bg-[#FFFFFF] text-black hover:bg-white'
               onClick={addMilestone}
             >
-              <p className="text-[#5D5D5D]">Add Another Milestone</p>
-              <PlusIcon className="w-4 h-4 text-[#5D5D5D]" />
+              <p className='text-[#5D5D5D]'>Add Another Milestone</p>
+              <PlusIcon className='h-4 w-4 text-[#5D5D5D]' />
             </Button>
           </div>
         )}
       </div>
-      <div className="w-full min-h-[120px]">
+      <div className='min-h-[120px] w-full'>
         {/* Save deed */}
         <Button
-          className="bg-[#52B9FF] text-[#FFFFFF] w-full"
+          className='w-full bg-[#52B9FF] text-[#FFFFFF]'
           onClick={() => {
-            setIsDeedSaved(true);
+            saveDeed();
           }}
         >
           Save Deed

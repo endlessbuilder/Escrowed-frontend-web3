@@ -12,9 +12,9 @@ import escrowed from "@/utils/escrowed";
 
 function DeedDetailsBuyer() {
   const mileStones = false;
-  const completed = true;
+  const completed = false;
   const completedMilestone = true;
-  const approved = false;
+  const approved = true;
   const [mileStonesObj, setMileStonesObj] = useState([
     {
       id: 0,
@@ -38,7 +38,7 @@ function DeedDetailsBuyer() {
       isCompleted: false,
     },
   ]);
-  const paymentPending = true;  
+  const paymentPending = false;  
 
   return !approved ? (
     <div className="h-screen w-screen flex flex-col items-start justify-start bg-[#F8F8F8] p-4 overflow-x-hidden gap-y-5">
