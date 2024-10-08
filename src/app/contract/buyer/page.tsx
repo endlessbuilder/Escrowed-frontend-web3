@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Check, CheckCheck, Copy, HandCoins, Info, Send } from "lucide-react";
 import report from "@/app/report-icon.png";
 import Image from "next/image";
-import { useState } from "react";
+import React, { useState } from "react";
 import RequestFunds from "@/components/RequestFunds";
 import SellerApplication from "@/components/SellerApplication";
 

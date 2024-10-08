@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown, PlusIcon, XIcon } from "lucide-react";
-import { useState } from "react";
+import React, { useState } from "react";
 
 function CreateFee() {
   const [deed, setDeed] = useState("");

@@ -4,7 +4,7 @@ import { Check, Copy, HandCoins, Info, Send } from "lucide-react";
 import report from "@/app/report-icon.png";
 import Image from "next/image";
 import ReleaseFunds from "@/components/ReleaseFunds";
-import { useState } from "react";
+import React, { useState } from "react";
 
 function DeedDetailsSeller() {
   const mileStones = true;
