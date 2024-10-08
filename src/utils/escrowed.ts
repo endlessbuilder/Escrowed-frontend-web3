@@ -1,10 +1,9 @@
 import web3 from './web3';
 import EscrowedJson from './Escrowed.json';
+import { CONTRACT_ADDRESS } from './constants';
 
 const { abi, evm }: any = EscrowedJson;
 
-const Escrowed = (address: string) => {
-  return new web3.eth.Contract(abi, address);
-};
+const escrowed = new web3.eth.Contract(abi, CONTRACT_ADDRESS);
 
-export default Escrowed;
+export default escrowed;

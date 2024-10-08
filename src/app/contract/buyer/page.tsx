@@ -7,6 +7,9 @@ import React, { useState } from "react";
 import RequestFunds from "@/components/RequestFunds";
 import SellerApplication from "@/components/SellerApplication";
 
+import web3 from "@/utils/web3";
+import escrowed from "@/utils/escrowed";
+
 function DeedDetailsBuyer() {
   const mileStones = false;
   const completed = true;
@@ -35,7 +38,8 @@ function DeedDetailsBuyer() {
       isCompleted: false,
     },
   ]);
-  const paymentPending = true;
+  const paymentPending = true;  
+
   return !approved ? (
     <div className="h-screen w-screen flex flex-col items-start justify-start bg-[#F8F8F8] p-4 overflow-x-hidden gap-y-5">
       <div className="flex flex-col justify-center gap-y-2">

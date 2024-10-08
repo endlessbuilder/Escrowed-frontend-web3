@@ -1,4 +1,5 @@
 import Web3 from 'web3';
+import { SEPOLIA_RPC } from './constants';
 
 let provider: any;
 
@@ -10,7 +11,7 @@ if (
   (window as any).ethereum.request({ method: 'eth_requestAccounts' });
   provider = (window as any).ethereum;
 } else {
-  const url = process.env.DEPLOY_ENDPOINT || '';
+  const url = process.env.DEPLOY_ENDPOINT || SEPOLIA_RPC;
   // const mnemonic = process.env.DEPLOY_MNEMONIC || '';
   // provider = new HDWalletProvider(mnemonic, url);
   provider = new Web3.providers.HttpProvider(url);
