@@ -1,3 +1,4 @@
+import React from "react";
 import { UserRound } from "lucide-react";
 
 function Notifications() {

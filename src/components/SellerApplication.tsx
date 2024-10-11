@@ -1,5 +1,5 @@
 "use client";
-import { useRef } from "react";
+import React, { useRef } from "react";
 
 function SellerApplication(props: { seller: string; time: string }) {
   const radioRef = useRef<HTMLInputElement>(null);

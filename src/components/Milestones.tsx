@@ -1,5 +1,5 @@
 "use client";
-import { useRef } from "react";
+import React, { useRef } from "react";
 
 function Milestones(props: { milestone: string; amount: string }) {
   const radioRef = useRef<HTMLInputElement>(null);
