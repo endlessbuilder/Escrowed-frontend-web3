@@ -7,8 +7,13 @@ import { Upload, XIcon } from 'lucide-react';
 
 import web3 from '@/utils/web3';
 import escrowed from '@/utils/escrowed';
+import { Deed } from '@/utils/constants';
 
-function RequestFunds() {
+function RequestFunds(props: {deed: Deed | null}) {
+
+  console.log(">>> RequestFunds component here");
+  const { deed } = props;
+
   const [projectLink, setProjectLink] = useState('');
   const [mileStonesObj, setMileStonesObj] = useState([
     {
@@ -147,7 +152,7 @@ function RequestFunds() {
         <div className='flex w-full flex-col gap-y-2'>
           <div className='flex w-full justify-between text-[#5D5D5D]'>
             <p>Deed Buyer</p>
-            <p className='text-[#52B9FF]'>You(34 Plebi)</p>
+            <p className='text-[#52B9FF]'>You({deed?.buyer_id})</p>
           </div>
         </div>
         <div className='bg-[#EDEDED] p-[0.5px]'></div>
@@ -155,7 +160,7 @@ function RequestFunds() {
         <div className='flex w-full flex-col gap-y-2'>
           <div className='flex w-full justify-between text-[#5D5D5D]'>
             <p>Payment Distribution Type</p>
-            <p className='text-[#52B9FF]'>One Time</p>
+            <p className='text-[#52B9FF]'>{deed?.payment_type}</p>
           </div>
         </div>
         <div className='bg-[#EDEDED] p-[0.5px]'></div>
@@ -163,7 +168,7 @@ function RequestFunds() {
         <div className='flex w-full flex-col gap-y-2'>
           <div className='flex w-full justify-between text-[#5D5D5D]'>
             <p>Deed Completion Time</p>
-            <p className='text-[#52B9FF]'>4.5 weeks</p>
+            <p className='text-[#52B9FF]'>{deed?.timeline} weeks</p>
           </div>
         </div>
         <div className='bg-[#EDEDED] p-[0.5px]'></div>
@@ -171,7 +176,7 @@ function RequestFunds() {
         <div className='flex w-full flex-col gap-y-2'>
           <div className='flex w-full justify-between text-[#5D5D5D]'>
             <p>Total Deed Amount</p>
-            <p className='text-[#52B9FF]'>$1200</p>
+            <p className='text-[#52B9FF]'>${deed?.amount}</p>
           </div>
         </div>
         <div className='bg-[#EDEDED] p-[0.5px]'></div>

@@ -26,3 +26,12 @@ export interface User {
   last_name: string;
   email: string;
 }
+
+export interface Faqs {
+  id: number,
+  question: string,
+  answer: string,
+  status: "active" | "inactive" | null,
+  createdAt: any,
+  updatedAt: any,
+}
