@@ -11,8 +11,9 @@ import React, { useState } from 'react';
 
 import web3 from '@/utils/web3';
 import escrowed from '@/utils/escrowed';
-import { USDC } from '@/utils/constants';
+import { SERVER_IP, USDC } from '@/utils/constants';
 import { EventLog } from 'web3';
+import axios from 'axios';
 
 function CreateDeedSeller() {
   const [deed, setDeed] = useState('');
@@ -80,6 +81,21 @@ function CreateDeedSeller() {
       console.error('Error creating job:', error);
       alert('Failed to create job');
     }
+
+    const body = {
+      user_id: 1,
+      title: deed,
+      description: description,
+      payment_method: modeOfPayment,
+      payment_type: isOneTime ? 'one_time' : 'milestone',
+      milestones: mileStones,
+      buy_sell_type: 'SELL'
+    }
+
+    await axios.post(`${SERVER_IP}/deed/create`, body)
+    .catch((error) => {
+      console.log('Error creating');
+    });
 
   };
 
@@ -171,28 +187,21 @@ function CreateDeedSeller() {
                     setModeOfPayment(e?.currentTarget?.textContent);
                   }}
                 >
-                  UPI
+                  Ethereum
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={(e) => {
                     setModeOfPayment(e?.currentTarget?.textContent);
                   }}
                 >
-                  Crypto
+                  Solana
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={(e) => {
                     setModeOfPayment(e?.currentTarget?.textContent);
                   }}
                 >
-                  Net Banking
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    setModeOfPayment(e?.currentTarget?.textContent);
-                  }}
-                >
-                  Etc
+                  Ton
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
