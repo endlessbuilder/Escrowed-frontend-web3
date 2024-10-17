@@ -39,7 +39,7 @@ const deed: Deed = {
   description: 'description',
   payment_method: null,
   payment_type: null,
-  amount: 100,
+  amount: 0,
   timeline: 0,
   status: 'pending',
   buyer_id: 0,
@@ -50,8 +50,8 @@ const deed: Deed = {
 
 export default function Home() {
   const [userInfo, setUserInfo] = useState(user);
-  const [deeds, setDeeds] = useState([deed]);
-  const [filteredDeeds, setFilteredDeeds] = useState([deed]);
+  const [deeds, setDeeds] = useState<(Deed | null)[]>([]);
+  const [filteredDeeds, setFilteredDeeds] = useState<(Deed | null)[]>([]);
 
   const [category, setCategory] = useState<string | null>('');
   const [status, setStatus] = useState<string | null>('');
@@ -88,7 +88,7 @@ export default function Home() {
 
     getUserInfo();
     getDeedsByUser();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -106,23 +106,24 @@ export default function Home() {
 
         if (category === null || category === '' || category === undefined)
           flagCategory = true;
-        else if (value.category == category) flagCategory = true;
+        else if (value?.category == category) flagCategory = true;
         if (status === null || status === '' || status === undefined)
           flagStatus = true;
         else {
-          if (status == 'Active' && value.status != 'cancelled')
+          if (status == 'Active' && value?.status != 'cancelled')
             flagStatus = true;
-          if (status == 'Not Active' && value.status == 'cancelled')
+          if (status == 'Not Active' && value?.status == 'cancelled')
             flagStatus = true;
         }
         // if ( role === null || role === null '' || role === null undefined) flagRole = true;
         // else if (value.role == role) flagStatus = true;
         if (date === null || date === '' || date === undefined) flagDate = true;
-        else if (new Date(value.createdAt).toISOString().slice(0, 10) == date)
+        else if (new Date(value?.createdAt).toISOString().slice(0, 10) == date)
           flagDate = true;
 
         return flagCategory && flagStatus && flagDate;
       });
+
       setFilteredDeeds(filteredDeeds);
       console.log(`>>> filtered deeds = ${JSON.stringify(filteredDeeds)}`);
     };
@@ -132,11 +133,11 @@ export default function Home() {
 
   const getActiveNum = useCallback(() => {
     return deeds.filter(
-      (value) => value.status != 'completed' && value.status != 'cancelled'
+      (value) => value?.status != 'completed' && value?.status != 'cancelled'
     ).length;
   }, [deeds]);
   const getCompletedNum = useCallback(() => {
-    return deeds.filter((value) => value.status == 'completed').length;
+    return deeds.filter((value) => value?.status == 'completed').length;
   }, [deeds]);
 
   return (
@@ -361,16 +362,16 @@ export default function Home() {
         {filteredDeeds.map((deed) => (
           <div
             className='mx-6 min-h-[120px] w-full rounded-lg border-2 border-gray-200 bg-white px-4 py-4'
-            key={'deed' + deed.id}
+            key={'deed' + deed?.id}
           >
             <div className='flex flex-col'>
               {/* Details */}
-              <p className='text-xs text-[#5D5D5D]'>ID: {deed.id}</p>
+              <p className='text-xs text-[#5D5D5D]'>ID: {deed?.id}</p>
               <div className='flex gap-1 text-[#262626]'>
                 <p className='text-2xl font-bold'>$</p>
-                <p className='text-2xl font-bold'>{deed.amount}</p>
+                <p className='text-2xl font-bold'>{deed?.amount}</p>
               </div>
-              <p className='text-[#5D5D5D]'>{deed.title}</p>
+              <p className='text-[#5D5D5D]'>{deed?.title}</p>
             </div>
             <div className='flex flex-col gap-y-2 pt-5'>
               {/* Status */}
@@ -378,22 +379,22 @@ export default function Home() {
                 <div className='flex h-8 w-8 items-center justify-center rounded-full bg-[#52B9FF]'>
                   <Zap className='text-[#FFFFFF]' />
                 </div>
-                <p>{deed.status}</p>
+                <p>{deed?.status}</p>
               </div>
               <div className='flex items-center justify-between'>
                 <p className='text-sm text-[#C4C4C4]'>
-                  Last update: {deed.createdAt}
+                  Last update: {deed?.createdAt}
                 </p>
-                  {deed.buyer_id.toString() === userInfo.id.toString() && (
-                    <Link href={`/contract/buyer/${deed.id}`}>
-                      <Button className='bg-[#52B9FF]'>Details</Button>
-                    </Link>
-                  )}
-                  {deed.seller_id.toString() === userInfo.id.toString() && (
-                    <Link href={`/contract/seller/${deed.id}`}>
-                      <Button className='bg-[#52B9FF]'>Details</Button>
-                    </Link>
-                  )}
+                {deed?.buyer_id.toString() === userInfo.id.toString() && (
+                  <Link href={`/contract/buyer/${deed?.id}`}>
+                    <Button className='bg-[#52B9FF]'>Details</Button>
+                  </Link>
+                )}
+                {deed?.seller_id.toString() === userInfo.id.toString() && (
+                  <Link href={`/contract/seller/${deed?.id}`}>
+                    <Button className='bg-[#52B9FF]'>Details</Button>
+                  </Link>
+                )}
               </div>
             </div>
           </div>
