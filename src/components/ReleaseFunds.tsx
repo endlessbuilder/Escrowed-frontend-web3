@@ -3,8 +3,11 @@
 import { Button } from "@/components/ui/button";
 import React, { useEffect, useRef, useState } from "react";
 import Milestones from "./Milestones";
+import { Deed } from "@/utils/constants";
 
-function ReleaseFunds() {
+function ReleaseFunds(props: {deed: Deed | null}) {
+  console.log(">>> ReleaseFunds component here");
+  const { deed } = props;
   const [mileStonesObj, setMileStonesObj] = useState([
     {
       id: 0,
@@ -25,7 +28,7 @@ function ReleaseFunds() {
       expectedTime: "",
     },
   ]);
-  const mileStones = true;
+  const mileStones = false;
   const radioRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -40,6 +43,7 @@ function ReleaseFunds() {
         <div>
           <h1 className="text-[#484848] font-bold">Release Funds for</h1>
         </div>
+        {/* In the case of one pay */}
         {!mileStones && (
           <div className="w-full flex flex-col gap-y-2">
             <div
@@ -62,10 +66,11 @@ function ReleaseFunds() {
                 />
                 <label>Complete Project</label>
               </div>
-              <p className="text-[#52B9FF]">$1200</p>
+              <p className="text-[#52B9FF]">${deed?.amount}</p>
             </div>
           </div>
         )}
+        {/*  In the case of milestone pay  */}
         {mileStones &&
           mileStonesObj.map((val) => {
             return (
@@ -83,7 +88,7 @@ function ReleaseFunds() {
         <div className="w-full flex flex-col gap-y-2">
           <div className="w-full flex justify-between text-[#5D5D5D]">
             <p>Deed Buyer</p>
-            <p className="text-[#52B9FF]">You(34 Plebi)</p>
+            <p className="text-[#52B9FF]">{deed?.buyer_id}</p>
           </div>
         </div>
         <div className="p-[0.5px] bg-[#EDEDED]"></div>
@@ -91,7 +96,7 @@ function ReleaseFunds() {
         <div className="w-full flex flex-col gap-y-2">
           <div className="w-full flex justify-between text-[#5D5D5D]">
             <p>Payment Distribution Type</p>
-            <p className="text-[#52B9FF]">One Time</p>
+            <p className="text-[#52B9FF]">{deed?.payment_type}</p>
           </div>
         </div>
         <div className="p-[0.5px] bg-[#EDEDED]"></div>
@@ -99,7 +104,7 @@ function ReleaseFunds() {
         <div className="w-full flex flex-col gap-y-2">
           <div className="w-full flex justify-between text-[#5D5D5D]">
             <p>Deed Completion Time</p>
-            <p className="text-[#52B9FF]">4.5 weeks</p>
+            <p className="text-[#52B9FF]">{deed?.timeline} weeks</p>
           </div>
         </div>
         <div className="p-[0.5px] bg-[#EDEDED]"></div>
@@ -107,13 +112,13 @@ function ReleaseFunds() {
         <div className="w-full flex flex-col gap-y-2">
           <div className="w-full flex justify-between text-[#5D5D5D]">
             <p>Total Deed Amount</p>
-            <p className="text-[#52B9FF]">$1200</p>
+            <p className="text-[#52B9FF]">${deed?.amount}</p>
           </div>
         </div>
         <div className="p-[0.5px] bg-[#EDEDED]"></div>
       </div>
       <div className="w-full flex gap-2 min-h-[120px]">
-        {/* Share */}
+        {/* Release Funds */}
         <div className="w-full">
           <Button className="w-full bg-[#52B9FF] flex justify-center items-center gap-2">
             Release Funds

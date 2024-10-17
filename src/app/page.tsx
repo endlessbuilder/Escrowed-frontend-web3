@@ -88,6 +88,7 @@ export default function Home() {
 
     getUserInfo();
     getDeedsByUser();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -388,7 +389,7 @@ export default function Home() {
                       <Button className='bg-[#52B9FF]'>Details</Button>
                     </Link>
                   )}
-                  {deed.buyer_id.toString() === userInfo.id.toString() && (
+                  {deed.seller_id.toString() === userInfo.id.toString() && (
                     <Link href={`/contract/seller/${deed.id}`}>
                       <Button className='bg-[#52B9FF]'>Details</Button>
                     </Link>
