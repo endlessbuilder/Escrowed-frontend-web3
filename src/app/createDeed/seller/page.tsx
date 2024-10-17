@@ -11,7 +11,9 @@ import React, { useState } from 'react';
 
 import web3 from '@/utils/web3';
 import escrowed from '@/utils/escrowed';
-import { USDC } from '@/utils/constants';
+import { SERVER_IP, USDC } from '@/utils/constants';
+import { EventLog } from 'web3';
+import axios from 'axios';
 
 function CreateDeedSeller() {
   const [deed, setDeed] = useState('');
@@ -50,6 +52,22 @@ function CreateDeedSeller() {
     const accounts = await web3.eth.getAccounts();
     console.log(`>>> accounts = ${accounts}`);
     console.log(`>>> mileStoneFunds = ${getMilstoneFunds()}`);
+    
+    async function fetchEvents() {
+      let jobCount = 0;
+      try {
+        const events: (string | EventLog)[] = await escrowed.getPastEvents("JobCreated", {
+          fromBlock: 0, // You can specify a block range here
+          toBlock: 'latest', // To the latest block
+        });
+        console.log(">>> events : ", (events as EventLog[]).slice(-1)[0].returnValues.jobCount);
+        jobCount = parseInt( ((events as EventLog[]).slice(-1)[0].returnValues.jobCount as string).toString() );
+      } catch (error) {
+        console.error('>>> Error fetching events:', error);
+      }
+      return jobCount;
+    }
+    
     try {
       await escrowed.methods
         .createJob(accounts[0], USDC, mileStones.length, getMilstoneFunds())
@@ -57,10 +75,28 @@ function CreateDeedSeller() {
           from: accounts[0],
         });
       alert('Job created successfully!');
+      const jobCount = await fetchEvents();
+      console.log(`>>> Job Count : ${jobCount}`);
     } catch (error) {
       console.error('Error creating job:', error);
       alert('Failed to create job');
     }
+
+    const body = {
+      user_id: 1,
+      title: deed,
+      description: description,
+      payment_method: modeOfPayment,
+      payment_type: isOneTime ? 'one_time' : 'milestone',
+      milestones: mileStones,
+      buy_sell_type: 'SELL'
+    }
+
+    await axios.post(`${SERVER_IP}/deed/create`, body)
+    .catch((error) => {
+      console.log('Error creating');
+    });
+
   };
 
   return (
@@ -151,28 +187,21 @@ function CreateDeedSeller() {
                     setModeOfPayment(e?.currentTarget?.textContent);
                   }}
                 >
-                  UPI
+                  Ethereum
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={(e) => {
                     setModeOfPayment(e?.currentTarget?.textContent);
                   }}
                 >
-                  Crypto
+                  Solana
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={(e) => {
                     setModeOfPayment(e?.currentTarget?.textContent);
                   }}
                 >
-                  Net Banking
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    setModeOfPayment(e?.currentTarget?.textContent);
-                  }}
-                >
-                  Etc
+                  Ton
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
