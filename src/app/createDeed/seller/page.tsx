@@ -52,22 +52,32 @@ function CreateDeedSeller() {
     const accounts = await web3.eth.getAccounts();
     console.log(`>>> accounts = ${accounts}`);
     console.log(`>>> mileStoneFunds = ${getMilstoneFunds()}`);
-    
+
     async function fetchEvents() {
       let jobCount = 0;
       try {
-        const events: (string | EventLog)[] = await escrowed.getPastEvents("JobCreated", {
-          fromBlock: 0, // You can specify a block range here
-          toBlock: 'latest', // To the latest block
-        });
-        console.log(">>> events : ", (events as EventLog[]).slice(-1)[0].returnValues.jobCount);
-        jobCount = parseInt( ((events as EventLog[]).slice(-1)[0].returnValues.jobCount as string).toString() );
+        const events: (string | EventLog)[] = await escrowed.getPastEvents(
+          'JobCreated',
+          {
+            fromBlock: 0, // You can specify a block range here
+            toBlock: 'latest', // To the latest block
+          }
+        );
+        console.log(
+          '>>> events : ',
+          (events as EventLog[]).slice(-1)[0].returnValues.jobCount
+        );
+        jobCount = parseInt(
+          (
+            (events as EventLog[]).slice(-1)[0].returnValues.jobCount as string
+          ).toString()
+        );
       } catch (error) {
         console.error('>>> Error fetching events:', error);
       }
       return jobCount;
     }
-    
+
     try {
       await escrowed.methods
         .createJob(accounts[0], USDC, mileStones.length, getMilstoneFunds())
@@ -89,14 +99,12 @@ function CreateDeedSeller() {
       payment_method: modeOfPayment,
       payment_type: isOneTime ? 'one_time' : 'milestone',
       milestones: mileStones,
-      buy_sell_type: 'SELL'
-    }
+      buy_sell_type: 'SELL',
+    };
 
-    await axios.post(`${SERVER_IP}/deed/create`, body)
-    .catch((error) => {
-      console.log('Error creating');
+    await axios.post(`${SERVER_IP}/deed/create`, body).catch((error) => {
+      console.log('Error creating', error);
     });
-
   };
 
   return (
